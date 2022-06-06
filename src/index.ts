@@ -24,7 +24,10 @@ const CommandIDs = {
 };
 
 const getStreamlitApp = async (file: string = ''): Promise<string> => {
-  return await requestAPI<any>('test', { method: 'POST', body: JSON.stringify({ file }) })
+  return await requestAPI<any>('test', {
+    method: 'POST',
+    body: JSON.stringify({ file })
+  })
     .then(data => {
       return JSON.parse(JSON.stringify(data)).url;
     })
@@ -33,7 +36,7 @@ const getStreamlitApp = async (file: string = ''): Promise<string> => {
         `The streamlit_extension server extension appears to be missing.\n${reason}`
       );
     });
-}
+};
 
 /**
  * Initialization data for the streamlit-extension extension.
@@ -86,7 +89,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       icon: streamlitIcon,
       execute: async (args: any) => {
         const widget = new IFrame({
-          sandbox: ["allow-scripts", "allow-same-origin"]
+          sandbox: ['allow-scripts', 'allow-same-origin']
         });
         let url = await getStreamlitApp(args.file);
         widget.url = url;
