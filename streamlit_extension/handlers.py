@@ -18,7 +18,7 @@ class RouteHandler(APIHandler):
     def post(self):
         self.finish(json.dumps({
             "data": "This is /streamlit/test endpoint!",
-            "file": self.get_json_body().get("file")
+            "url": "http://localhost:8501"
         }))
 
 

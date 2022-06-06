@@ -23,23 +23,16 @@ const CommandIDs = {
   openFromEditor: 'streamlit:open-file'
 };
 
-const getStreamlitApp = async (file?: string): Promise<string> => {
-  let appUrl = "http://localhost:8501";
-
-  if (file) {
-    await requestAPI<any>('open', { method: 'POST', body: JSON.stringify({file}) })
+const getStreamlitApp = async (file: string = ''): Promise<string> => {
+  return await requestAPI<any>('test', { method: 'POST', body: JSON.stringify({ file }) })
     .then(data => {
-      console.log(data);
+      return JSON.parse(JSON.stringify(data)).url;
     })
     .catch(reason => {
       console.error(
         `The streamlit_extension server extension appears to be missing.\n${reason}`
       );
     });
-  }
-
-  return appUrl;
-
 }
 
 /**
@@ -95,7 +88,8 @@ const plugin: JupyterFrontEndPlugin<void> = {
         const widget = new IFrame({
           sandbox: ["allow-scripts", "allow-same-origin"]
         });
-        widget.url = await getStreamlitApp(args.file);
+        let url = await getStreamlitApp(args.file);
+        widget.url = url;
 
         const main = new MainAreaWidget({ content: widget });
         main.title.label = args.file || 'Streamlit';
