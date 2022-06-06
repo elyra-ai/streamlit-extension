@@ -23,7 +23,7 @@ const CommandIDs = {
   openFromEditor: 'streamlit:open-file'
 };
 
-const getStreamlitApp = async (file: string = ''): Promise<string> => {
+const getStreamlitApp = async (file = ''): Promise<string> => {
   return await requestAPI<any>('test', {
     method: 'POST',
     body: JSON.stringify({ file })
@@ -91,7 +91,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         const widget = new IFrame({
           sandbox: ['allow-scripts', 'allow-same-origin']
         });
-        let url = await getStreamlitApp(args.file);
+        const url = await getStreamlitApp(args.file);
         widget.url = url;
 
         const main = new MainAreaWidget({ content: widget });
