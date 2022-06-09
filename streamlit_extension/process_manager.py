@@ -6,6 +6,7 @@ from subprocess import CalledProcessError
 from subprocess import PIPE
 from traitlets.config import SingletonConfigurable
 from traitlets.config import LoggingConfigurable
+from urllib.parse import urlparse
 
 
 class StreamlitManager(SingletonConfigurable):
@@ -16,11 +17,11 @@ class StreamlitManager(SingletonConfigurable):
         super().__init__(**kwargs)
         self.streamlit_instances = {}
 
-    def start(self, streamlit_app_filepath: str) -> str:
+    def start(self, streamlit_app_filepath: str) -> 'StreamlitApplication':
         streamlit_app = StreamlitApplication(streamlit_app_filepath=streamlit_app_filepath)
         streamlit_app.start()
         self.streamlit_instances[streamlit_app_filepath] = streamlit_app
-        return streamlit_app.port
+        return streamlit_app
 
     def stop(self, streamlit_app_filepath: str) -> None:
         streamlit_app = self.streamlit_instances.get(streamlit_app_filepath)
@@ -51,6 +52,8 @@ class StreamlitApplication(LoggingConfigurable):
         :param kwargs:
         """
         super().__init__(**kwargs)
+        self.internal_host_url = None
+        self.external_host_url = None
         self.port = get_open_port()
         self.app_start_dir = os.path.dirname(streamlit_app_filepath)
         self.app_basename = os.path.basename(streamlit_app_filepath)
@@ -70,7 +73,12 @@ class StreamlitApplication(LoggingConfigurable):
                 self.log.info(f"Failed to start Streamlit application on port {self.port} due to {error}")
 
             # Voodoo magic, needs to 'hit' the process otherwise server will not serve
-            self.process.stdout.readline()
+            for i in range(3):
+                self.process.stdout.readline()
+            internal_url_line = self.process.stdout.readline().decode('utf-8')
+            external_url_line = self.process.stdout.readline().decode('utf-8')
+            self.internal_host_url = parse_hostname(internal_url_line)
+            self.external_host_url = parse_hostname(external_url_line)
 
     def stop(self) -> None:
         if self.process:
@@ -98,3 +106,16 @@ def get_open_port() -> str:
     sock = socket.socket()
     sock.bind(('', 0))
     return str(sock.getsockname()[1])
+
+
+def parse_hostname(parse_line: str) -> str:
+    """
+    Fragile function to parse out the URL from the output log
+    :param parse_line:
+    :return:
+    """
+    remove_newlines_line = parse_line.rstrip('\n')
+    strip_line = remove_newlines_line.strip()
+    tokenize_line = strip_line.split(" ")[2]
+    url_obj = urlparse(tokenize_line)
+    return f"{url_obj.scheme}://{url_obj.netloc}"

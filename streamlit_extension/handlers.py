@@ -22,11 +22,11 @@ class RouteHandler(APIHandler):
         json_payload = self.get_json_body()
         streamlit_app_filepath = json_payload['file']
 
-        port = StreamlitManager.instance().start(streamlit_app_filepath=streamlit_app_filepath)
+        streamlit_app = StreamlitManager.instance().start(streamlit_app_filepath=streamlit_app_filepath)
 
         self.finish(json.dumps({
             "data": "This is /streamlit/test endpoint!",
-            "url": f"http://localhost:{port}"
+            "url": f"{streamlit_app.internal_host_url}"
         }))
 
     @tornado.web.authenticated
