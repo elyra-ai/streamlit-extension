@@ -1,5 +1,4 @@
 import { URLExt } from '@jupyterlab/coreutils';
-
 import { ServerConnection } from '@jupyterlab/services';
 
 /**
@@ -24,23 +23,20 @@ export async function requestAPI<T>(
   let response: Response;
   try {
     response = await ServerConnection.makeRequest(requestUrl, init, settings);
-  } catch (error) {
+  } catch (error: any) {
     throw new ServerConnection.NetworkError(error);
   }
 
-  let data: any = await response.text();
-
-  if (data.length > 0) {
-    try {
-      data = JSON.parse(data);
-    } catch (error) {
-      console.log('Not a JSON response body.', response);
-    }
+  let data: any;
+  try {
+    data = await response.json();
+  } catch (error: any) {
+    console.log('Not a JSON response body.', response);
   }
 
   if (!response.ok) {
     throw new ServerConnection.ResponseError(response, data.message || data);
   }
 
-  return data;
+  return data || response;
 }

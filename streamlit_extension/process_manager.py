@@ -4,6 +4,7 @@ import socket
 from subprocess import Popen
 from subprocess import CalledProcessError
 from subprocess import PIPE
+from typing import Dict
 from traitlets.config import SingletonConfigurable
 from traitlets.config import LoggingConfigurable
 from urllib.parse import urlparse
@@ -17,7 +18,12 @@ class StreamlitManager(SingletonConfigurable):
         super().__init__(**kwargs)
         self.streamlit_instances = {}
 
+    def list(self) -> Dict:
+        return self.streamlit_instances
+
     def start(self, streamlit_app_filepath: str) -> 'StreamlitApplication':
+        if streamlit_app_filepath in self.streamlit_instances.keys():
+          return self.streamlit_instances[streamlit_app_filepath]
         streamlit_app = StreamlitApplication(streamlit_app_filepath=streamlit_app_filepath)
         streamlit_app.start()
         self.streamlit_instances[streamlit_app_filepath] = streamlit_app
@@ -27,6 +33,7 @@ class StreamlitManager(SingletonConfigurable):
         streamlit_app = self.streamlit_instances.get(streamlit_app_filepath)
         if streamlit_app:
             streamlit_app.stop()
+            del self.streamlit_instances[streamlit_app_filepath]
         else:
             self.log.info(f"Unable to find running instance of {streamlit_app_filepath} application")
 

@@ -12,9 +12,11 @@ class RouteHandler(APIHandler):
     # Jupyter server
     @tornado.web.authenticated
     def get(self):
-        self.finish(json.dumps({
-            "data": "This is /streamlit/test endpoint!"
-        }))
+        appList = StreamlitManager.instance().list()
+        instances = {}
+        for key in appList:
+          instances[key] = appList[key].internal_host_url
+        self.finish(json.dumps(instances))
 
     @tornado.web.authenticated
     def post(self):
@@ -25,7 +27,6 @@ class RouteHandler(APIHandler):
         streamlit_app = StreamlitManager.instance().start(streamlit_app_filepath=streamlit_app_filepath)
 
         self.finish(json.dumps({
-            "data": "This is /streamlit/test endpoint!",
             "url": f"{streamlit_app.internal_host_url}"
         }))
 
@@ -42,6 +43,6 @@ def setup_handlers(web_app):
     host_pattern = ".*$"
 
     base_url = web_app.settings["base_url"]
-    route_pattern = url_path_join(base_url, "streamlit", "test")
+    route_pattern = url_path_join(base_url, "streamlit", "app")
     handlers = [(route_pattern, RouteHandler)]
     web_app.add_handlers(host_pattern, handlers)

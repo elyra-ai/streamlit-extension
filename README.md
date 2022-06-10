@@ -1,7 +1,8 @@
-# Streamlit Jupyterlab Extension POC
+# Streamlit JupyterLab Extension
 
 [![Github Actions Status](https://github.com/ajbozarth/streamlit-extension/workflows/Build/badge.svg)](https://github.com/ajbozarth/streamlit-extension/actions/workflows/build.yml)
-A JupyterLab extension.
+
+An extension to open a streamlit app within JupyterLab.
 
 This extension is composed of a Python package named `streamlit_extension`
 for the server extension and a NPM package named `streamlit-extension`
