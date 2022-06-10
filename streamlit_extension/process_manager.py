@@ -75,7 +75,10 @@ class StreamlitApplication(LoggingConfigurable):
         if not self.process or not self.is_alive():
             self.log.info(f"Starting Streamlit application '{self.app_basename}' on port {self.port}")
             try:
-                self.process = Popen(self.streamlit_cmd, cwd=self.app_start_dir, stdout=PIPE)
+                if self.app_start_dir:
+                    self.process = Popen(self.streamlit_cmd, cwd=self.app_start_dir, stdout=PIPE)
+                else:
+                    self.process = Popen(self.streamlit_cmd, stdout=PIPE)
             except CalledProcessError as error:
                 self.log.info(f"Failed to start Streamlit application on port {self.port} due to {error}")
 
