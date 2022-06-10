@@ -3,7 +3,13 @@ import {
   JupyterFrontEnd,
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
-import { IFrame, MainAreaWidget, WidgetTracker } from '@jupyterlab/apputils';
+import {
+  Dialog,
+  IFrame,
+  MainAreaWidget,
+  showDialog,
+  WidgetTracker
+} from '@jupyterlab/apputils';
 import { IFileBrowserFactory } from '@jupyterlab/filebrowser';
 import { IEditorTracker } from '@jupyterlab/fileeditor';
 import { LabIcon } from '@jupyterlab/ui-components';
@@ -138,6 +144,11 @@ const plugin: JupyterFrontEndPlugin<void> = {
         // In this case we want to close the widget rather than set the url
         if (url === undefined) {
           main.dispose();
+          void showDialog({
+            title: 'Streamlit application failed to start',
+            body: 'Check the logs for more information.',
+            buttons: [Dialog.okButton()]
+          });
         } else {
           widget.url = url;
         }
