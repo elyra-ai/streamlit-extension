@@ -2,7 +2,9 @@ import json
 
 from jupyter_server.base.handlers import APIHandler
 from jupyter_server.utils import url_path_join
+from streamlit_extension.process_manager import StreamlitManager
 import tornado
+
 
 class RouteHandler(APIHandler):
     # The following decorator should be present on all verb methods (head, get, post,
@@ -16,10 +18,24 @@ class RouteHandler(APIHandler):
 
     @tornado.web.authenticated
     def post(self):
+        # parse filename and location
+        json_payload = self.get_json_body()
+        streamlit_app_filepath = json_payload['file']
+
+        streamlit_app = StreamlitManager.instance().start(streamlit_app_filepath=streamlit_app_filepath)
+
         self.finish(json.dumps({
             "data": "This is /streamlit/test endpoint!",
-            "url": "http://localhost:8501"
+            "url": f"{streamlit_app.internal_host_url}"
         }))
+
+    @tornado.web.authenticated
+    def delete(self):
+        # parse filename and location
+        json_payload = self.get_json_body()
+        streamlit_app_filepath = json_payload['file']
+
+        StreamlitManager.instance().stop(streamlit_app_filepath=streamlit_app_filepath)
 
 
 def setup_handlers(web_app):
