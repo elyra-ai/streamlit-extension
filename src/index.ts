@@ -12,28 +12,18 @@ import {
 } from '@jupyterlab/apputils';
 import { IFileBrowserFactory } from '@jupyterlab/filebrowser';
 import { IEditorTracker } from '@jupyterlab/fileeditor';
-import { LabIcon } from '@jupyterlab/ui-components';
 import { find } from '@lumino/algorithm';
 
 import path from 'path';
+import { StreamlitButtonExtension } from './button';
 
 import { requestAPI } from './handler';
-
-import iconSvg from '../style/streamlit-mark-color.svg';
+import { CommandIDs, streamlitIcon } from './utils';
 
 const NAMESPACE = 'streamlit-extension';
 
 const serverErrorMessage =
   'There was an issue with the streamlit_extension server extension.';
-
-/**
- * The command IDs used by the  plugin.
- */
-const CommandIDs = {
-  open: 'streamlit:open',
-  openFromBrowser: 'streamlit:open-browser',
-  openFromEditor: 'streamlit:open-file'
-};
 
 const getStreamlitApp = async (file: string): Promise<string> => {
   return await requestAPI<any>('app', {
@@ -82,11 +72,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
       .catch(reason => {
         console.error(`${serverErrorMessage}\n${reason}`);
       });
-
-    const streamlitIcon = new LabIcon({
-      name: 'streamlit:icon',
-      svgstr: iconSvg
-    });
 
     const tracker = new WidgetTracker<MainAreaWidget<IFrame>>({
       namespace: NAMESPACE
@@ -194,14 +179,21 @@ const plugin: JupyterFrontEndPlugin<void> = {
       label: 'Run in Streamlit'
     });
 
+    app.docRegistry.addWidgetExtension(
+      'Editor',
+      new StreamlitButtonExtension(app.commands)
+    );
+
     app.contextMenu.addItem({
       selector: '[data-file-type="python"]',
-      command: CommandIDs.openFromBrowser
+      command: CommandIDs.openFromBrowser,
+      rank: 999
     });
 
     app.contextMenu.addItem({
       selector: '.jp-FileEditor',
-      command: CommandIDs.openFromEditor
+      command: CommandIDs.openFromEditor,
+      rank: 999
     });
   }
 };
