@@ -184,6 +184,12 @@ const plugin: JupyterFrontEndPlugin<void> = {
       new StreamlitButtonExtension(app.commands)
     );
 
+    // Add button to Elyra Python Editor if installed
+    app.docRegistry.addWidgetExtension(
+      'Python Editor',
+      new StreamlitButtonExtension(app.commands)
+    );
+
     app.contextMenu.addItem({
       selector: '[data-file-type="python"]',
       command: CommandIDs.openFromBrowser,
