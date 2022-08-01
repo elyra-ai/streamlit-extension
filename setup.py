@@ -55,11 +55,13 @@ setup_args = dict(
     packages=setuptools.find_packages(),
     install_requires=[
         "jupyter_server>=1.6,<2",
+        "jupyter-server-proxy",
         "streamlit"
     ],
     zip_safe=False,
     include_package_data=True,
     python_requires=">=3.7",
+    py_modules=['streamlit'],
     platforms="Linux, Mac OS X, Windows",
     keywords=["Jupyter", "JupyterLab", "JupyterLab3"],
     classifiers=[

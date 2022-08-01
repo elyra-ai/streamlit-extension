@@ -59,8 +59,8 @@ class StreamlitApplication(LoggingConfigurable):
         :param kwargs:
         """
         super().__init__(**kwargs)
-        self.internal_host_url = None
-        self.external_host_url = None
+        self.internal_host = {}
+        self.external_host = {}
         self.port = get_open_port()
         self.app_start_dir = os.path.dirname(streamlit_app_filepath)
         self.app_basename = os.path.basename(streamlit_app_filepath)
@@ -87,8 +87,8 @@ class StreamlitApplication(LoggingConfigurable):
                 self.process.stdout.readline()
             internal_url_line = self.process.stdout.readline().decode('utf-8')
             external_url_line = self.process.stdout.readline().decode('utf-8')
-            self.internal_host_url = parse_hostname(internal_url_line)
-            self.external_host_url = parse_hostname(external_url_line)
+            self.internal_host = parse_hostname(internal_url_line)
+            self.external_host = parse_hostname(external_url_line)
 
     def stop(self) -> None:
         if self.process:
@@ -118,7 +118,7 @@ def get_open_port() -> str:
     return str(sock.getsockname()[1])
 
 
-def parse_hostname(parse_line: str) -> str:
+def parse_hostname(parse_line: str) -> Dict:
     """
     Fragile function to parse out the URL from the output log
     :param parse_line:
@@ -128,4 +128,6 @@ def parse_hostname(parse_line: str) -> str:
     strip_line = remove_newlines_line.strip()
     tokenize_line = strip_line.split(" ")[2]
     url_obj = urlparse(tokenize_line)
-    return f"{url_obj.scheme}://{url_obj.netloc}"
+    return {"host": url_obj.hostname,
+            "scheme": url_obj.scheme
+            }
