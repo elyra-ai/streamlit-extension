@@ -30,7 +30,7 @@ class RouteHandler(APIHandler):
         streamlit_app = StreamlitManager.instance().start(streamlit_app_filepath=streamlit_app_filepath)
 
         self.finish(json.dumps({
-            "url": f"{self.get_origin()}/proxy/{streamlit_app.port}/"
+            "url": f"/proxy/{streamlit_app.port}/"
         }))
 
     @tornado.web.authenticated
