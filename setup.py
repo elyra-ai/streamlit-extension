@@ -61,7 +61,6 @@ setup_args = dict(
     zip_safe=False,
     include_package_data=True,
     python_requires=">=3.7",
-    py_modules=['streamlit'],
     platforms="Linux, Mac OS X, Windows",
     keywords=["Jupyter", "JupyterLab", "JupyterLab3"],
     classifiers=[
