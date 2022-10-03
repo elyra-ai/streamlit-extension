@@ -71,6 +71,7 @@ setup_args = dict(
     packages=setuptools.find_packages(),
     install_requires=[
         "jupyter_server>=1.6,<2",
+        "jupyter-server-proxy",
         "streamlit"
     ],
     zip_safe=False,

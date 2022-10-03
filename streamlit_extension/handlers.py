@@ -43,7 +43,7 @@ class RouteHandler(APIHandler):
         streamlit_app = StreamlitManager.instance().start(streamlit_app_filepath=streamlit_app_filepath)
 
         self.finish(json.dumps({
-            "url": f"{streamlit_app.internal_host_url}"
+            "url": f"/proxy/{streamlit_app.port}/"
         }))
 
     @tornado.web.authenticated
@@ -57,7 +57,6 @@ class RouteHandler(APIHandler):
 
 def setup_handlers(web_app):
     host_pattern = ".*$"
-
     base_url = web_app.settings["base_url"]
     route_pattern = url_path_join(base_url, "streamlit", "app")
     handlers = [(route_pattern, RouteHandler)]
