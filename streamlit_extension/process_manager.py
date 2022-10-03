@@ -27,9 +27,10 @@ from urllib.parse import urlparse
 
 
 class StreamlitManager(SingletonConfigurable):
+    """Class to keep track of streamlit application instances and manage
+    lifecycles
     """
-    Class to keep track of streamlit application instances and manage lifecycles
-    """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.streamlit_instances = {}
@@ -39,8 +40,9 @@ class StreamlitManager(SingletonConfigurable):
 
     def start(self, streamlit_app_filepath: str) -> 'StreamlitApplication':
         if streamlit_app_filepath in self.streamlit_instances.keys():
-          return self.streamlit_instances[streamlit_app_filepath]
-        streamlit_app = StreamlitApplication(streamlit_app_filepath=streamlit_app_filepath)
+            return self.streamlit_instances[streamlit_app_filepath]
+        streamlit_app = StreamlitApplication(
+            streamlit_app_filepath=streamlit_app_filepath)
         streamlit_app.start()
         self.streamlit_instances[streamlit_app_filepath] = streamlit_app
         return streamlit_app
@@ -51,7 +53,10 @@ class StreamlitManager(SingletonConfigurable):
             streamlit_app.stop()
             del self.streamlit_instances[streamlit_app_filepath]
         else:
-            self.log.info(f"Unable to find running instance of {streamlit_app_filepath} application")
+            self.log.info(
+                "Unable to find running instance of ",
+                f"{streamlit_app_filepath} application"
+            )
 
     def restart(self, streamlit_app_filepath: str) -> None:
         """
@@ -65,14 +70,17 @@ class StreamlitManager(SingletonConfigurable):
             streamlit_app.stop()
             streamlit_app.start()
         else:
-            self.log.info(f"Unable to find running instance of {streamlit_app_filepath} application")
+            self.log.info(
+                "Unable to find running instance of ",
+                f"{streamlit_app_filepath} application"
+            )
 
 
 class StreamlitApplication(LoggingConfigurable):
     def __init__(self, streamlit_app_filepath: str, **kwargs):
         """
-        :param streamlit_app_filepath: the relative path to the streamlit application file (*.py)
-        :param kwargs:
+        :param streamlit_app_filepath: the relative path to the streamlit
+        application file (*.py) :param kwargs:
         """
         super().__init__(**kwargs)
         self.internal_host = {}
@@ -80,25 +88,35 @@ class StreamlitApplication(LoggingConfigurable):
         self.port = get_open_port()
         self.app_start_dir = os.path.dirname(streamlit_app_filepath)
         self.app_basename = os.path.basename(streamlit_app_filepath)
-        self.streamlit_cmd = [sys.executable, "-m", "streamlit", "run", self.app_basename,
-                              "--browser.gatherUsageStats=false",  # turn off usage upload to streamlit
-                              "--server.runOnSave=true",           # auto refresh app on save
-                              "--server.headless=true",            # run headless, avoids email sign up
-                              "--server.port", self.port]
+        self.streamlit_cmd = [
+            sys.executable, "-m", "streamlit", "run", self.app_basename,
+            "--browser.gatherUsageStats=false",  # turn off usage stats upload
+            "--server.runOnSave=true",  # auto refresh app on save
+            "--server.headless=true",  # run headless, avoids email sign up
+            "--server.port", self.port
+        ]
         self.process = None
 
     def start(self) -> None:
         if not self.process or not self.is_alive():
-            self.log.info(f"Starting Streamlit application '{self.app_basename}' on port {self.port}")
+            self.log.info(
+                f"Starting Streamlit application '{self.app_basename}' ",
+                f"on port {self.port}"
+            )
             try:
                 if self.app_start_dir:
-                    self.process = Popen(self.streamlit_cmd, cwd=self.app_start_dir, stdout=PIPE)
+                    self.process = Popen(self.streamlit_cmd,
+                                         cwd=self.app_start_dir, stdout=PIPE)
                 else:
                     self.process = Popen(self.streamlit_cmd, stdout=PIPE)
             except CalledProcessError as error:
-                self.log.info(f"Failed to start Streamlit application on port {self.port} due to {error}")
+                self.log.info(
+                    "Failed to start Streamlit application ",
+                    f"on port {self.port} due to {error}"
+                )
 
-            # Voodoo magic, needs to 'hit' the process otherwise server will not serve
+            # Voodoo magic, needs to 'hit' the process otherwise server will
+            # not serve
             for i in range(3):
                 self.process.stdout.readline()
             internal_url_line = self.process.stdout.readline().decode('utf-8')
@@ -108,11 +126,16 @@ class StreamlitApplication(LoggingConfigurable):
 
     def stop(self) -> None:
         if self.process:
-            self.log.info(f"Stopping Streamlit application '{self.app_basename}' on port {self.port}")
+            self.log.info(
+                f"Stopping Streamlit application '{self.app_basename}' ",
+                f"on port {self.port}"
+            )
             self.process.terminate()
             self.process = None
         else:
-            self.log.info(f"Streamlit application '{self.app_basename}' is not running")
+            self.log.info(
+                f"Streamlit application '{self.app_basename}' is not running"
+            )
 
     def is_alive(self) -> bool:
         """
@@ -144,6 +167,7 @@ def parse_hostname(parse_line: str) -> Dict:
     strip_line = remove_newlines_line.strip()
     tokenize_line = strip_line.split(" ")[2]
     url_obj = urlparse(tokenize_line)
-    return {"host": url_obj.hostname,
-            "scheme": url_obj.scheme
-            }
+    return {
+        "host": url_obj.hostname,
+        "scheme": url_obj.scheme
+    }

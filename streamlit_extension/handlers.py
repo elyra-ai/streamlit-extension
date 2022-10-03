@@ -23,15 +23,15 @@ import tornado
 
 
 class RouteHandler(APIHandler):
-    # The following decorator should be present on all verb methods (head, get, post,
-    # patch, put, delete, options) to ensure only authorized user can request the
-    # Jupyter server
+    # The following decorator should be present on all verb methods (head,
+    # get, post, patch, put, delete, options) to ensure only authorized user
+    # can request the Jupyter server
     @tornado.web.authenticated
     def get(self):
         appList = StreamlitManager.instance().list()
         instances = {}
         for key in appList:
-          instances[key] = appList[key].internal_host_url
+            instances[key] = appList[key].internal_host_url
         self.finish(json.dumps(instances))
 
     @tornado.web.authenticated
@@ -40,7 +40,9 @@ class RouteHandler(APIHandler):
         json_payload = self.get_json_body()
         streamlit_app_filepath = json_payload['file']
 
-        streamlit_app = StreamlitManager.instance().start(streamlit_app_filepath=streamlit_app_filepath)
+        streamlit_app = StreamlitManager.instance().start(
+            streamlit_app_filepath=streamlit_app_filepath
+        )
 
         self.finish(json.dumps({
             "url": f"/proxy/{streamlit_app.port}/"
@@ -52,7 +54,9 @@ class RouteHandler(APIHandler):
         json_payload = self.get_json_body()
         streamlit_app_filepath = json_payload['file']
 
-        StreamlitManager.instance().stop(streamlit_app_filepath=streamlit_app_filepath)
+        StreamlitManager.instance().stop(
+            streamlit_app_filepath=streamlit_app_filepath
+        )
 
 
 def setup_handlers(web_app):

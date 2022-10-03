@@ -7,14 +7,13 @@
     "jupyterlab",
     "jupyterlab-extension"
   ],
-  "homepage": "https://github.com/ajbozarth/streamlit-extension",
+  "homepage": "https://github.com/elyra-ai/streamlit-extension",
   "bugs": {
-    "url": "https://github.com/ajbozarth/streamlit-extension/issues"
+    "url": "https://github.com/elyra-ai/streamlit-extension/issues"
   },
-  "license": "BSD-3-Clause",
+  "license": "Apache-2.0",
   "author": {
-    "name": "Alex Bozarth",
-    "email": "ajbozart@us.ibm.com"
+    "name": "Elyra Authors"
   },
   "files": [
     "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
@@ -25,7 +24,7 @@
   "style": "style/index.css",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ajbozarth/streamlit-extension.git"
+    "url": "https://github.com/elyra-ai/streamlit-extension.git"
   },
   "scripts": {
     "build": "jlpm build:lib && jlpm build:labextension:dev",

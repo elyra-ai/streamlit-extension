@@ -18,7 +18,7 @@ limitations under the License.
 
 # Streamlit JupyterLab Extension
 
-[![Github Actions Status](https://github.com/ajbozarth/streamlit-extension/workflows/Build/badge.svg)](https://github.com/ajbozarth/streamlit-extension/actions/workflows/build.yml)
+[![Github Actions Status](https://github.com/elyra-ai/streamlit-extension/workflows/Build/badge.svg)](https://github.com/elyra-ai/streamlit-extension/actions/workflows/build.yml)
 
 An extension to open a streamlit app within JupyterLab.
 
