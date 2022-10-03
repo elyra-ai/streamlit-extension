@@ -34,12 +34,37 @@ import path from 'path';
 import { StreamlitButtonExtension } from './button';
 
 import { requestAPI } from './handler';
-import { CommandIDs, streamlitIcon } from './utils';
+import { CommandIDs, getCookie, streamlitIcon } from './utils';
 
 const NAMESPACE = 'streamlit-extension';
 
 const serverErrorMessage =
   'There was an issue with the streamlit_extension server extension.';
+
+export const syncXsrfCookie = (): void => {
+  const xsrf = getCookie('_xsrf');
+  const jupyterlab_xsrf = getCookie('jupyterlab_xsrf');
+  // Initialize or update jupyterlab_xsrf to duplicate _xsrf
+  if (xsrf && (!jupyterlab_xsrf || xsrf !== jupyterlab_xsrf)) {
+    document.cookie = 'jupyterlab_xsrf=' + xsrf;
+  }
+  // Restore _xsrf if deleted
+  if (jupyterlab_xsrf && !xsrf) {
+    document.cookie = '_xsrf=' + jupyterlab_xsrf;
+  }
+};
+
+export const checkCookie = (function () {
+  syncXsrfCookie();
+  let previousCookie = document.cookie;
+  return () => {
+    const currentCookie = document.cookie;
+    if (currentCookie !== previousCookie) {
+      syncXsrfCookie();
+      previousCookie = currentCookie;
+    }
+  };
+})();
 
 const getStreamlitApp = async (file: string): Promise<string> => {
   return await requestAPI<any>('app', {
@@ -217,6 +242,10 @@ const plugin: JupyterFrontEndPlugin<void> = {
       command: CommandIDs.openFromEditor,
       rank: 999
     });
+
+    // Poll changes to cookies and prevent the deletion of _xsrf by Streamlit
+    // _xsrf deletion issue: https://github.com/streamlit/streamlit/issues/2517
+    window.setInterval(checkCookie, 100); // run every 100 ms
   }
 };
 

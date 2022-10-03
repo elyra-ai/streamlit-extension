@@ -28,3 +28,6 @@ export const streamlitIcon = new LabIcon({
   name: 'streamlit:icon',
   svgstr: iconSvg
 });
+
+export const getCookie = (key: string): string =>
+  document.cookie.match('(^|;)\\s*' + key + '\\s*=\\s*([^;]+)')?.pop() || '';
