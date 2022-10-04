@@ -1,5 +1,5 @@
 {
-  "name": "streamlit-extension",
+  "name": "@elyra/streamlit-extension",
   "version": "0.1.0",
   "description": "An extension to open a streamlit app within JupyterLab",
   "keywords": [

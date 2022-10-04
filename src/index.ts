@@ -36,7 +36,7 @@ import { StreamlitButtonExtension } from './button';
 import { requestAPI } from './handler';
 import { CommandIDs, getCookie, streamlitIcon } from './utils';
 
-const NAMESPACE = 'streamlit-extension';
+const NAMESPACE = '@elyra/streamlit-extension';
 
 const serverErrorMessage =
   'There was an issue with the streamlit_extension server extension.';

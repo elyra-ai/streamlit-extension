@@ -1,5 +1,5 @@
 {
   "packageManager": "python",
-  "packageName": "streamlit_extension",
-  "uninstallInstructions": "Use your Python package manager (pip, conda, etc.) to uninstall the package streamlit_extension"
+  "packageName": "elyra-streamlit-extension",
+  "uninstallInstructions": "Use your Python package manager (pip, conda, etc.) to uninstall the package elyra-streamlit-extension"
 }

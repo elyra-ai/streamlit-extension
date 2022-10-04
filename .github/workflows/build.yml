@@ -51,7 +51,7 @@ jobs:
         pip install build
         python -m build --sdist
         cp dist/*.tar.gz myextension.tar.gz
-        pip uninstall -y "streamlit_extension" jupyterlab
+        pip uninstall -y "elyra-streamlit-extension" jupyterlab
         rm -rf myextension
 
     - uses: actions/upload-artifact@v2

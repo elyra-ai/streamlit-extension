@@ -26,7 +26,7 @@ HERE = Path(__file__).parent.resolve()
 pkg_json = json.loads((HERE / "package.json").read_bytes())
 
 # The name of the project
-name = "streamlit_extension"
+name = "elyra-streamlit-extension"
 
 lab_path = (HERE / pkg_json["jupyterlab"]["outputDir"])
 

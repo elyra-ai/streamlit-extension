@@ -22,10 +22,6 @@ limitations under the License.
 
 An extension to open a streamlit app within JupyterLab.
 
-This extension is composed of a Python package named `streamlit_extension`
-for the server extension and a NPM package named `streamlit-extension`
-for the frontend extension.
-
 ## Requirements
 
 - JupyterLab >= 3.0
@@ -35,7 +31,7 @@ for the frontend extension.
 To install the extension, execute:
 
 ```bash
-pip install streamlit_extension
+pip install elyra-streamlit-extension
 ```
 
 ## Uninstall
@@ -43,7 +39,7 @@ pip install streamlit_extension
 To remove the extension, execute:
 
 ```bash
-pip uninstall streamlit_extension
+pip uninstall elyra-streamlit-extension
 ```
 
 ## Troubleshoot
@@ -107,12 +103,12 @@ jupyter lab build --minimize=False
 ```bash
 # Server extension must be manually disabled in develop mode
 jupyter server extension disable streamlit_extension
-pip uninstall streamlit_extension
+pip uninstall elyra-streamlit-extension
 ```
 
 In development mode, you will also need to remove the symlink created by `jupyter labextension develop`
 command. To find its location, you can run `jupyter labextension list` to figure out where the `labextensions`
-folder is located. Then you can remove the symlink named `streamlit-extension` within that folder.
+folder is located. Then you can remove the symlink named `@elyra/streamlit-extension` within that folder.
 
 ### Packaging the extension
 
